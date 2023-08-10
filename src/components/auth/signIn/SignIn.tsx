@@ -34,7 +34,7 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
 
     try {
       await axios
-        .post("https://covid19-api-rj18.onrender.com/auth", {
+        .post("http://localhost:8000/auth", {
           email: signInData.email,
           password: signInData.password,
           verificationCode: searchParamsCode,

@@ -46,7 +46,7 @@ export const SignUp: React.FC<SignUpProps> = ({
     event.preventDefault();
 
     try {
-      await axios.post("https://covid19-api-rj18.onrender.com/register", {
+      await axios.post("http://localhost:8000/register", {
         name: signUpData.name,
         email: signUpData.email,
         password: signUpData.password,
