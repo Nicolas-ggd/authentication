@@ -1,6 +1,6 @@
-import React, { useState, MouseEvent } from "react";
+import React, { useState, FormEvent } from "react";
 import axios from "axios";
-import CheckIcon from '@mui/icons-material/Check';
+import CheckIcon from "@mui/icons-material/Check";
 
 interface SignUpProps {
   closeSignUp: () => void;
@@ -8,21 +8,19 @@ interface SignUpProps {
 
 interface SignUpData {
   name: string;
-  email: string;
+  numberOrEmail: any;
   password: string;
   confirmPassword: string;
 }
 
-export const SignUp: React.FC<SignUpProps> = ({
-  closeSignUp,
-}) => {
+export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
   const [isError, setIsError] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isSend, setIsSend] = useState<boolean>(false);
   const [isSuccessSend, setIsSuccessSend] = useState<boolean>(false);
   const [signUpData, setSignUpData] = useState<SignUpData>({
     name: "",
-    email: "",
+    numberOrEmail: "",
     password: "",
     confirmPassword: "",
   });
@@ -31,11 +29,12 @@ export const SignUp: React.FC<SignUpProps> = ({
     setIsChecked((prevIsChecked) => !prevIsChecked);
   };
 
-  const submitSignUpData = async (event: MouseEvent<HTMLFormElement>) => {
+  const submitSignUpData = async (event: FormEvent<HTMLFormElement>) => {
     if (
       signUpData.name.length === 0 ||
-      signUpData.email.length === 0 ||
+      signUpData.numberOrEmail.length === 0 ||
       signUpData.password.length === 0 ||
+      signUpData.password.length < 6 ||
       signUpData.confirmPassword.length === 0 ||
       signUpData.confirmPassword !== signUpData.password
     ) {
@@ -48,7 +47,7 @@ export const SignUp: React.FC<SignUpProps> = ({
     try {
       await axios.post("http://localhost:8000/register", {
         name: signUpData.name,
-        email: signUpData.email,
+        numberOrEmail: signUpData.numberOrEmail,
         password: signUpData.password,
       });
 
@@ -109,27 +108,26 @@ export const SignUp: React.FC<SignUpProps> = ({
                     htmlFor="email"
                     className="block dark:text-white mb-2 text-sm font-medium"
                   >
-                    Your email
+                    Mobile number or email
                   </label>
                   <input
                     style={{
                       borderColor:
-                        isError && signUpData?.email?.length === 0 ? "red" : "",
+                        isError && signUpData?.numberOrEmail?.length === 0
+                          ? "red"
+                          : "",
                     }}
-                    type="email"
-                    name="email"
-                    id="email"
                     className="bg-gray-50 dark:bg-gray-700 dark:text-white border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2.5 outline-none"
-                    placeholder="name@company.com"
+                    placeholder="Mobile number or email"
                     onChange={(e) => {
                       setSignUpData((prevSendData) => ({
                         ...prevSendData,
-                        email: e.target.value,
+                        numberOrEmail: e.target.value,
                       }));
                     }}
                   />
                 </div>
-                {isError && signUpData?.email?.length <= 0 && (
+                {isError && signUpData?.numberOrEmail?.length <= 0 && (
                   <span style={{ color: "red", margin: "3px" }}>
                     Please fill the email
                   </span>
@@ -150,7 +148,7 @@ export const SignUp: React.FC<SignUpProps> = ({
                           : "",
                     }}
                     type="password"
-                    name="password" 
+                    name="password"
                     id="password"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 dark:bg-gray-700 dark:text-white text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2.5 outline-none"

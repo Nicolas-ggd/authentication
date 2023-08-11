@@ -10,12 +10,14 @@ interface SignInProps {
 export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
   const navigate = useNavigate();
   const [isError, setIsError] = useState<boolean>(false);
+  const [isAuthError, setIsAuthError] = useState<boolean>(false);
+  const [isAuthTextError, setIsAuthTextError] = useState("");
   const [isForgot, setIsForgot] = useState<boolean>(false);
   const [signInData, setSignInData] = useState<{
-    email: string;
+    numberOrEmail: any;
     password: string;
   }>({
-    email: "",
+    numberOrEmail: "",
     password: "",
   });
   const [searchVerifyCode] = useSearchParams();
@@ -27,7 +29,10 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
   };
 
   const submitSignInData = async (event: FormEvent<HTMLFormElement>) => {
-    if (signInData?.email?.length === 0 || signInData?.password?.length === 0) {
+    if (
+      signInData?.numberOrEmail?.length === 0 ||
+      signInData?.password?.length === 0
+    ) {
       return setIsError(true);
     }
     event.preventDefault();
@@ -35,7 +40,7 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
     try {
       await axios
         .post("http://localhost:8000/auth", {
-          email: signInData.email,
+          numberOrEmail: signInData.numberOrEmail,
           password: signInData.password,
           verificationCode: searchParamsCode,
         })
@@ -48,7 +53,10 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.message || "Authentication failed";
-      console.log(errorMessage);
+      setIsAuthError(true);
+      setIsAuthTextError(errorMessage);
+
+      setTimeout(() => setIsAuthError(false), 3000);
     }
   };
 
@@ -62,43 +70,47 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
     <section className="bg-gray-50 dark:bg-gray-800 transiton duration-300">
       {!isForgot && (
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+          <h1 className="text-xl my-2 font-bold leading-tight tracking-tight md:text-2xl text-gray-900 dark:text-white">
+            Sign in to your account
+          </h1>
           <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 transiton duration-300 sm:p-8 dark:bg-gray-700 dark:rounded-md">
-              <h1 className="text-xl font-bold leading-tight tracking-tight md:text-2xl text-gray-900 dark:text-white">
-                Sign in to your account
-              </h1>
               <form
                 className="space-y-4 md:space-y-6"
                 onSubmit={submitSignInData}
               >
+                {isAuthError && (
+                  <div className="bg-red-400 p-2 w-full rounded-md text-center">
+                    <p>{isAuthTextError}</p>
+                  </div>
+                )}
                 <div>
                   <label
                     htmlFor="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Your email
+                    Mobile number or email
                   </label>
                   <input
                     style={{
                       borderColor:
-                        isError && signInData?.email?.length === 0 ? "red" : "",
+                        isError && signInData?.numberOrEmail?.length === 0
+                          ? "red"
+                          : "",
                     }}
-                    type="email"
-                    name="email"
-                    id="email"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
-                    placeholder="name@company.com"
+                    placeholder="Mobile number or email"
                     required
-                    value={signInData.email}
+                    value={signInData.numberOrEmail}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       setSignInData((prevSendData) => ({
                         ...prevSendData,
-                        email: e.target.value,
+                        numberOrEmail: e.target.value,
                       }))
                     }
                   />
                 </div>
-                {isError && signInData?.email?.length <= 0 && (
+                {isError && signInData?.numberOrEmail?.length <= 0 && (
                   <span style={{ color: "red", margin: "3px" }}>
                     Please fill the email
                   </span>
