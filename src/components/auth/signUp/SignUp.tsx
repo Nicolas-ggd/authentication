@@ -1,6 +1,8 @@
 import React, { useState, FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import CheckIcon from "@mui/icons-material/Check";
+import { useEffect } from 'react';
 
 interface SignUpProps {
   closeSignUp: () => void;
@@ -8,19 +10,20 @@ interface SignUpProps {
 
 interface SignUpData {
   name: string;
-  numberOrEmail: any;
+  mobileNumber: any;
   password: string;
   confirmPassword: string;
 }
 
 export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
+  const navigate = useNavigate();
   const [isError, setIsError] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isSend, setIsSend] = useState<boolean>(false);
   const [isSuccessSend, setIsSuccessSend] = useState<boolean>(false);
   const [signUpData, setSignUpData] = useState<SignUpData>({
     name: "",
-    numberOrEmail: "",
+    mobileNumber: "",
     password: "",
     confirmPassword: "",
   });
@@ -32,7 +35,7 @@ export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
   const submitSignUpData = async (event: FormEvent<HTMLFormElement>) => {
     if (
       signUpData.name.length === 0 ||
-      signUpData.numberOrEmail.length === 0 ||
+      signUpData.mobileNumber.length === 0 ||
       signUpData.password.length === 0 ||
       signUpData.password.length < 6 ||
       signUpData.confirmPassword.length === 0 ||
@@ -47,12 +50,13 @@ export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
     try {
       await axios.post("http://localhost:8000/register", {
         name: signUpData.name,
-        numberOrEmail: signUpData.numberOrEmail,
+        mobileNumber: signUpData.mobileNumber,
         password: signUpData.password,
       });
 
       setIsSend(false);
       setIsSuccessSend(true);
+      navigate(`/otp-verify/${signUpData?.mobileNumber}`);
     } catch (error) {
       console.error(error);
       setIsSend(false);
@@ -108,26 +112,26 @@ export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
                     htmlFor="email"
                     className="block dark:text-white mb-2 text-sm font-medium"
                   >
-                    Mobile number or email
+                    Mobile number
                   </label>
                   <input
                     style={{
                       borderColor:
-                        isError && signUpData?.numberOrEmail?.length === 0
+                        isError && signUpData?.mobileNumber?.length === 0
                           ? "red"
                           : "",
                     }}
                     className="bg-gray-50 dark:bg-gray-700 dark:text-white border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2.5 outline-none"
-                    placeholder="Mobile number or email"
+                    placeholder="(+995) 955 955 955"
                     onChange={(e) => {
                       setSignUpData((prevSendData) => ({
                         ...prevSendData,
-                        numberOrEmail: e.target.value,
+                        mobileNumber: e.target.value,
                       }));
                     }}
                   />
                 </div>
-                {isError && signUpData?.numberOrEmail?.length <= 0 && (
+                {isError && signUpData?.mobileNumber?.length <= 0 && (
                   <span style={{ color: "red", margin: "3px" }}>
                     Please fill the email
                   </span>
@@ -290,7 +294,7 @@ export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
           <div className="flex flex-col items-center justify-center h-screen w-screen">
             <CheckIcon color="success" fontSize="large" />
             <h2 className="p-3 dark:text-white">
-              Please check your email and verify your account.
+              Please check your phone and verify your account.
             </h2>
           </div>
         </div>

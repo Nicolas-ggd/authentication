@@ -14,10 +14,10 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
   const [isAuthTextError, setIsAuthTextError] = useState("");
   const [isForgot, setIsForgot] = useState<boolean>(false);
   const [signInData, setSignInData] = useState<{
-    numberOrEmail: any;
+    mobileNumber: any;
     password: string;
   }>({
-    numberOrEmail: "",
+    mobileNumber: "",
     password: "",
   });
   const [searchVerifyCode] = useSearchParams();
@@ -30,7 +30,7 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
 
   const submitSignInData = async (event: FormEvent<HTMLFormElement>) => {
     if (
-      signInData?.numberOrEmail?.length === 0 ||
+      signInData?.mobileNumber?.length === 0 ||
       signInData?.password?.length === 0
     ) {
       return setIsError(true);
@@ -40,7 +40,7 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
     try {
       await axios
         .post("http://localhost:8000/auth", {
-          numberOrEmail: signInData.numberOrEmail,
+          mobileNumber: signInData.mobileNumber,
           password: signInData.password,
           verificationCode: searchParamsCode,
         })
@@ -89,28 +89,28 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
                     htmlFor="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Mobile number or email
+                    Mobile number
                   </label>
                   <input
                     style={{
                       borderColor:
-                        isError && signInData?.numberOrEmail?.length === 0
+                        isError && signInData?.mobileNumber?.length === 0
                           ? "red"
                           : "",
                     }}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
-                    placeholder="Mobile number or email"
+                    placeholder="Mobile number"
                     required
-                    value={signInData.numberOrEmail}
+                    value={signInData.mobileNumber}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       setSignInData((prevSendData) => ({
                         ...prevSendData,
-                        numberOrEmail: e.target.value,
+                        mobileNumber: e.target.value,
                       }))
                     }
                   />
                 </div>
-                {isError && signInData?.numberOrEmail?.length <= 0 && (
+                {isError && signInData?.mobileNumber?.length <= 0 && (
                   <span style={{ color: "red", margin: "3px" }}>
                     Please fill the email
                   </span>

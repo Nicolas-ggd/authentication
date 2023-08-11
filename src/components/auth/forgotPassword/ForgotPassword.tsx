@@ -9,7 +9,7 @@ interface ForgotPasswordProps {
 }
 
 interface ResetData {
-    numberOrEmail: string;
+  mobileNumber: string;
 }
 
 interface NewPassword {
@@ -26,7 +26,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
   const [isSend, setIsSend] = useState<Boolean>(false);
   const [isSuccessSend, setIsSuccessSend] = useState<Boolean>(false);
   const [resetData, setResetData] = useState<ResetData>({
-    numberOrEmail: "",
+    mobileNumber: "",
   });
   const [searchToken] = useSearchParams();
   const searchParamsToken = searchToken.get("token");
@@ -36,7 +36,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
   });
 
   const submitEmailToResetPassword = async () => {
-    if (resetData?.numberOrEmail?.length === 0) {
+    if (resetData?.mobileNumber?.length === 0) {
       return setIsSendingError(true);
     }
 
@@ -44,12 +44,12 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
 
     await axios
       .post("http://localhost:8000/reset-password", {
-        numberOrEmail: resetData?.numberOrEmail,
+        mobileNumber: resetData?.mobileNumber,
       })
       .then(() => {
         setIsSend(false);
         setIsSuccessSend(true);
-        navigate(`/otp-verify/${resetData?.numberOrEmail}`);
+        navigate(`/otp-verify/${resetData?.mobileNumber}`);
       });
   };
 
@@ -97,7 +97,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                Enter your mobile number or email to reset password
+                Enter your mobile number to reset password
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={submitEmailToResetPassword}>
                 <div>
@@ -105,27 +105,27 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
                     htmlFor="email"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                   >
-                    Mobile number or email
+                    Mobile number
                   </label>
                   <input
                     style={{
                       borderColor:
-                        isSendingError && resetData?.numberOrEmail?.length === 0
+                        isSendingError && resetData?.mobileNumber?.length === 0
                           ? "red"
                           : "",
                     }}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
-                    placeholder="Mobile number or email"
+                    placeholder="(+995) 955 955 955"
                     onChange={(e) => {
                       setResetData((prevSendData) => ({
                         ...prevSendData,
-                        numberOrEmail: e.target.value,
+                        mobileNumber: e.target.value,
                       }));
                     }}
                   />
-                  {isSendingError && resetData?.numberOrEmail?.length === 0 && (
+                  {isSendingError && resetData?.mobileNumber?.length === 0 && (
                     <span style={{ color: "red", margin: "3px" }}>
-                      Please enter the mobile number or email
+                      Please enter the mobile number
                     </span>
                   )}
 
@@ -168,7 +168,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
               </svg>
               <span className="sr-only">Loading...</span>
               <h2 className="p-4">
-                Reset password link has been sent to your email.
+                Reset password link has been sent to your mobile number.
               </h2>
             </div>
           </div>
@@ -177,7 +177,7 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
           <div role="status">
             <div className="flex flex-col items-center justify-center h-screen w-screen">
               <CheckIcon color="success" fontSize="large" />
-              <h2 className="p-3">Please check your email.</h2>
+              <h2 className="p-3">Please check your mobile.</h2>
             </div>
           </div>
         )}
