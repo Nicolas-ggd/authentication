@@ -1,11 +1,15 @@
-import { useState, useRef, ChangeEvent, KeyboardEvent } from "react";
-import { useParams } from 'react-router-dom';
+import { useState, useRef, ChangeEvent, KeyboardEvent, FormEvent } from "react";
+import { useParams } from "react-router-dom";
+
+import axios from "axios";
 
 import BeenhereIcon from "@mui/icons-material/Beenhere";
 
 export const OTPVerification = () => {
   const { mobileNumber } = useParams();
   const numInputs = 6;
+  const [isEmpty, setIsEmpty] = useState<boolean>(false);
+  const [isError, setIsError] = useState<string>("");
   const [otpValues, setOtpValues] = useState<string[]>(
     Array(numInputs).fill("")
   );
@@ -43,6 +47,25 @@ export const OTPVerification = () => {
     }
   };
 
+  const verifyAccount = async(event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (otpValues.some((value) => value === "")) {
+      setIsEmpty(true);
+      setIsError("Please fill all input fields.");
+    } else {
+      setIsEmpty(false);
+    }
+    const otpString = otpValues.join("");
+
+  };
+
+  const resendSMSCode = async () => {
+    await axios.post("http://localhost:8000/verify/resend-verification-code", {
+      mobileNumber: mobileNumber,
+    });
+  };
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -57,9 +80,11 @@ export const OTPVerification = () => {
               <h1 className="text-xl text-center font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 Enter OTP Code
               </h1>
-              <p className="text-center py-2 text-gray-400">Code has sent to +995{mobileNumber} </p>
+              <p className="text-center py-2 text-gray-400">
+                Code has sent to +995{mobileNumber}{" "}
+              </p>
             </div>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form className="space-y-4 md:space-y-6" onSubmit={verifyAccount}>
               <div className="flex">
                 {otpValues.map((value, index) => (
                   <input
@@ -71,13 +96,29 @@ export const OTPVerification = () => {
                     onKeyDown={(event) => handleInputKeyPress(index, event)}
                     ref={inputRefs[index]}
                     className="mx-2 font-bold text-xl text-center bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    required
+                    style={{
+                      borderColor: isEmpty && isError ? "red" : "",
+                      backgroundColor: isEmpty && isError ? "#ff000021" : "",
+                    }}
                   />
                 ))}
               </div>
+              {isEmpty && (
+                <p className="text-red-500 text-center">
+                  You need to fill all fields.
+                </p>
+              )}
               <div className="flex flex-col justify-center">
-                <p className="text-gray-400 text-center">Haven't received the reset code?</p>
-                <button className="text-sky-500 hover:text-sky-700">Resend</button>
+                <p className="text-gray-400 text-center">
+                  Haven't received the code?
+                </p>
+                <button
+                  type="button"
+                  className="text-sky-500 hover:text-sky-700"
+                  onClick={resendSMSCode}
+                >
+                  Resend
+                </button>
               </div>
               <button
                 type="submit"

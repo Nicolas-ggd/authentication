@@ -2,7 +2,6 @@ import React, { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import CheckIcon from "@mui/icons-material/Check";
-import { useEffect } from 'react';
 
 interface SignUpProps {
   closeSignUp: () => void;
