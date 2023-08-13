@@ -58,6 +58,9 @@ export const OTPVerification = () => {
     }
     const otpString = otpValues.join("");
 
+    await axios.post('http://localhost:8000/verify', {
+      verificationCode: otpString
+    })
   };
 
   const resendSMSCode = async () => {
@@ -82,6 +85,9 @@ export const OTPVerification = () => {
               </h1>
               <p className="text-center py-2 text-gray-400">
                 Code has sent to +995{mobileNumber}{" "}
+              </p>
+              <p className="text-center py-2 text-gray-400">
+                This is one time code and its valid during: <span className="text-gray-500">4:52</span>
               </p>
             </div>
             <form className="space-y-4 md:space-y-6" onSubmit={verifyAccount}>
