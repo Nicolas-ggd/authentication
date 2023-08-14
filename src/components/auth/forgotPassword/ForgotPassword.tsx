@@ -75,7 +75,6 @@ export const ForgotPassword: React.FC<ForgotPasswordProps> = ({
           )
           .then((res) => {
             const data = res.data;
-            console.log(data);
             localStorage.setItem("access_token", data?.access_token);
             navigate("/");
           });
