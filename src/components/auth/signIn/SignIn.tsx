@@ -70,11 +70,11 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
     <section className="bg-gray-50 dark:bg-gray-800 transiton duration-300">
       {!isForgot && (
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <h1 className="text-xl my-2 font-bold leading-tight tracking-tight md:text-2xl text-gray-900 dark:text-white">
-            Sign in to your account
-          </h1>
           <div className="w-full bg-white rounded-lg shadow md:mt-0 sm:max-w-md xl:p-0">
             <div className="p-6 space-y-4 md:space-y-6 transiton duration-300 sm:p-8 dark:bg-gray-700 dark:rounded-md">
+              <h1 className="text-xl my-2 font-bold leading-tight tracking-tight md:text-2xl text-gray-900 dark:text-white">
+                Sign in to your account
+              </h1>
               <form
                 className="space-y-4 md:space-y-6"
                 onSubmit={submitSignInData}
