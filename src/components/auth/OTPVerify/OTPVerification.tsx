@@ -1,5 +1,5 @@
-import { useState, useRef, ChangeEvent, KeyboardEvent, FormEvent } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useRef, ChangeEvent, KeyboardEvent, FormEvent, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import axios from "axios";
 
@@ -7,7 +7,10 @@ import BeenhereIcon from "@mui/icons-material/Beenhere";
 
 export const OTPVerification = () => {
   const { mobileNumber } = useParams();
+  const navigate = useNavigate();
   const numInputs = 6;
+  const initialTime = 5 * 60; // 5 minutes in seconds
+  const [timeRemaining, setTimeRemaining] = useState(initialTime);
   const [isEmpty, setIsEmpty] = useState<boolean>(false);
   const [isError, setIsError] = useState<string>("");
   const [otpValues, setOtpValues] = useState<string[]>(
@@ -61,12 +64,40 @@ export const OTPVerification = () => {
     await axios.post('http://localhost:8000/verify', {
       verificationCode: otpString
     })
+    .then((res) => {
+      const data = res.data;
+      console.log(data);
+      if (data.verified) {
+        navigate('/');
+      }
+    })
   };
 
   const resendSMSCode = async () => {
+    setTimeRemaining(initialTime);
     await axios.post("http://localhost:8000/verify/resend-verification-code", {
       mobileNumber: mobileNumber,
     });
+  };
+
+  useEffect(() => {
+    let intervalId: number;
+
+    if (timeRemaining > 0) {
+      intervalId = window.setInterval(() => {
+        setTimeRemaining((prevTime) => prevTime - 1);
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [timeRemaining]);
+
+  const formatTime = (timeInSeconds: number): string => {
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = timeInSeconds % 60;
+    return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
   };
 
   return (
@@ -87,7 +118,7 @@ export const OTPVerification = () => {
                 Code has sent to +995{mobileNumber}{" "}
               </p>
               <p className="text-center py-2 text-gray-400">
-                This is one time code and its valid during: <span className="text-gray-500">4:52</span>
+                This is one time code and its valid during: <span className="text-gray-500">{formatTime(timeRemaining)}</span>
               </p>
             </div>
             <form className="space-y-4 md:space-y-6" onSubmit={verifyAccount}>
