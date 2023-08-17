@@ -108,7 +108,7 @@ export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
 
                 <div>
                   <label
-                    htmlFor="email"
+                    htmlFor="text"
                     className="block dark:text-white mb-2 text-sm font-medium"
                   >
                     Mobile number
@@ -120,6 +120,9 @@ export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
                           ? "red"
                           : "",
                     }}
+                    name="text"
+                    type="text"
+                    id="text"
                     className="bg-gray-50 dark:bg-gray-700 dark:text-white border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2.5 outline-none"
                     placeholder="(+995) 955 955 955"
                     onChange={(e) => {
@@ -283,7 +286,7 @@ export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
             </svg>
             <span className="sr-only">Loading...</span>
             <h2 className="p-4 dark:text-white">
-              A verification link has been send to your email.
+              A verification SMS has been send to your mobile number.
             </h2>
           </div>
         </div>
@@ -293,7 +296,7 @@ export const SignUp: React.FC<SignUpProps> = ({ closeSignUp }) => {
           <div className="flex flex-col items-center justify-center h-screen w-screen">
             <CheckIcon color="success" fontSize="large" />
             <h2 className="p-3 dark:text-white">
-              Please check your phone and verify your account.
+              Please check your mobile number and verify your account.
             </h2>
           </div>
         </div>

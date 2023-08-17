@@ -1,7 +1,6 @@
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
-import { useEffect } from "react";
 
 interface SignInProps {
   closeSignIn?: () => void;
@@ -40,15 +39,17 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
     try {
       await axios
         .post("http://localhost:8000/auth", {
-          mobileNumber: signInData.mobileNumber,
-          password: signInData.password,
+          mobileNumber: signInData?.mobileNumber,
+          password: signInData?.password,
           verificationCode: searchParamsCode,
         })
         .then((res) => {
           const data = res.data;
           localStorage.setItem("access_token", data?.access_token);
           localStorage.setItem("userId", data?._id);
-          navigate("/country");
+          localStorage.setItem("mobileNumber", data?.mobileNumber);
+          localStorage.setItem("userName", data?.name);
+          navigate("/dashboard");
         });
     } catch (error: any) {
       const errorMessage =
@@ -62,7 +63,7 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
 
   useEffect(() => {
     if (accessToken) {
-      navigate("/country");
+      navigate("/dashboard");
     }
   }, []);
 
@@ -98,6 +99,9 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
                           ? "red"
                           : "",
                     }}
+                    type="text"
+                    name="text"
+                    id="text"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 outline-none"
                     placeholder="Mobile number"
                     required
@@ -181,7 +185,7 @@ export const SignIn: React.FC<SignInProps> = ({ closeSignIn }) => {
 
                 <button
                   type="submit"
-                  className="w-full transition delay-50 border-none text-white bg-sky-400 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 outline-none"
+                  className="w-full transition delay-50 border-none text-white bg-sky-400 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-md px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 outline-none"
                 >
                   Sign in
                 </button>
